@@ -1,0 +1,26 @@
+services:
+  redis:
+    image: redis:7.4-rc
+    hostname: redis
+    restart: always
+    # healthcheck:
+    #   test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ] 
+    ports:
+      - "6379:6379"
+
+  server:
+    build:
+      context: ./
+      dockerfile: ./build/server/Dockerfile
+    restart: always
+    environment:
+      SERVER_HOST: "0.0.0.0"
+      SERVER_PORT: "42069"
+      REDIS_PORT: 6379
+      REDIS_ADDR: redis
+      REDIS_DATABASE: 0
+    ports:
+      - "42069:42069"
+    # depends_on:
+    #   redis:
+    #     condition: service_healthy
